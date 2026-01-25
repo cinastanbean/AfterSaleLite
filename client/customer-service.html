@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>电商售后客服 - 虚拟问答界面</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      height: 90vh;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* 左侧边栏 */
+    .sidebar {
+      width: 280px;
+      background: #f8f9fa;
+      border-right: 1px solid #e0e0e0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-header {
+      padding: 24px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+    }
+
+    .sidebar-header h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .sidebar-header p {
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    .menu-section {
+      padding: 20px 0;
+    }
+
+    .menu-title {
+      padding: 0 24px;
+      font-size: 12px;
+      color: #999;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .menu-item {
+      padding: 14px 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.3s;
+      color: #666;
+      border-left: 3px solid transparent;
+    }
+
+    .menu-item:hover {
+      background: #f0f0f0;
+    }
+
+    .menu-item.active {
+      background: #e8f4ff;
+      color: #667eea;
+      border-left-color: #667eea;
+    }
+
+    .menu-item .icon {
+      font-size: 20px;
+    }
+
+    .menu-item .text {
+      font-size: 15px;
+    }
+
+    .user-info {
+      padding: 20px;
+      border-top: 1px solid #e0e0e0;
+      background: #fff;
+    }
+
+    .user-info .user-id {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+
+    .user-info .user-id span {
+      color: #667eea;
+      font-weight: 600;
+    }
+
+    .mode-switch {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      font-size: 13px;
+    }
+
+    .mode-switch select {
+      flex: 1;
+      padding: 6px 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 13px;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    /* 主聊天区域 */
+    .chat-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+    }
+
+    .chat-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid #e0e0e0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chat-header .title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .chat-header .avatar {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: #fff;
+    }
+
+    .chat-header .info h3 {
+      font-size: 18px;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    .chat-header .status {
+      font-size: 13px;
+      color: #4caf50;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chat-header .status::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: #4caf50;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .chat-header .actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .action-btn {
+      padding: 8px 16px;
+      border: 1px solid #e0e0e0;
+      background: #fff;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      color: #666;
+      transition: all 0.3s;
+    }
+
+    .action-btn:hover {
+      border-color: #667eea;
+      color: #667eea;
+    }
+
+    /* 消息区域 */
+    .messages-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      background: #fafafa;
+    }
+
+    .welcome-message {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+    }
+
+    .welcome-message .welcome-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+
+    .welcome-message h3 {
+      font-size: 24px;
+      color: #333;
+      margin-bottom: 12px;
+    }
+
+    .welcome-message p {
+      font-size: 15px;
+      margin-bottom: 24px;
+    }
+
+    .quick-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .quick-action-btn {
+      padding: 10px 20px;
+      background: #fff;
+      border: 2px solid #667eea;
+      color: #667eea;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+
+    .quick-action-btn:hover {
+      background: #667eea;
+      color: #fff;
+      transform: translateY(-2px);
+    }
+
+    /* 消息样式 */
+    .message {
+      display: flex;
+      margin-bottom: 20px;
+      animation: fadeIn 0.3s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .message.user {
+      justify-content: flex-end;
+    }
+
+    .message.assistant {
+      justify-content: flex-start;
+    }
+
+    .message-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+      margin-right: 12px;
+    }
+
+    .message.user .message-avatar {
+      margin-right: 0;
+      margin-left: 12px;
+      background: #667eea;
+      color: #fff;
+    }
+
+    .message.assistant .message-avatar {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+    }
+
+    .message-content {
+      max-width: 70%;
+      padding: 14px 18px;
+      border-radius: 16px;
+      font-size: 14px;
+      line-height: 1.6;
+      word-wrap: break-word;
+    }
+
+    .message.user .message-content {
+      background: #667eea;
+      color: #fff;
+      border-radius: 16px 4px 16px 16px;
+    }
+
+    .message.assistant .message-content {
+      background: #fff;
+      color: #333;
+      border-radius: 4px 16px 16px 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .message-meta {
+      font-size: 11px;
+      color: #999;
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .message-mode {
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .message-mode.agent {
+      background: #e3f2fd;
+      color: #1976d2;
+    }
+
+    .message-mode.rag {
+      background: #f3e5f5;
+      color: #7b1fa2;
+    }
+
+    .message-mode.tool {
+      background: #e8f5e9;
+      color: #388e3c;
+    }
+
+    .message-sources {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .message-sources-label {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+
+    .message-sources-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .source-tag {
+      padding: 4px 10px;
+      background: #e3f2fd;
+      color: #1976d2;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+
+    /* 工具结果展示 */
+    .tool-result {
+      margin-top: 12px;
+      padding: 12px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      font-size: 13px;
+    }
+
+    .tool-result-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+      color: #667eea;
+      font-weight: 600;
+    }
+
+    .tool-result-content {
+      background: #fff;
+      padding: 10px;
+      border-radius: 4px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .order-info {
+      display: grid;
+      gap: 8px;
+      font-size: 12px;
+    }
+
+    .order-info-item {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .order-info-item label {
+      color: #666;
+    }
+
+    .order-info-item span {
+      font-weight: 600;
+    }
+
+    /* 加载动画 */
+    .typing-indicator {
+      display: flex;
+      gap: 4px;
+      padding: 12px 16px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    .typing-indicator span {
+      width: 8px;
+      height: 8px;
+      background: #667eea;
+      border-radius: 50%;
+      animation: typing 1.4s infinite;
+    }
+
+    .typing-indicator span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .typing-indicator span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes typing {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    /* 输入区域 */
+    .input-area {
+      padding: 20px 24px;
+      border-top: 1px solid #e0e0e0;
+      background: #fff;
+    }
+
+    .input-container {
+      display: flex;
+      gap: 12px;
+    }
+
+    .input-wrapper {
+      flex: 1;
+      position: relative;
+    }
+
+    #messageInput {
+      width: 100%;
+      padding: 14px 50px 14px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.3s;
+      resize: none;
+      font-family: inherit;
+    }
+
+    #messageInput:focus {
+      border-color: #667eea;
+    }
+
+    .send-btn {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .send-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .send-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .input-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+    }
+
+    .input-actions-left {
+      display: flex;
+      gap: 16px;
+    }
+
+    .input-actions-left button {
+      background: none;
+      border: none;
+      color: #666;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.3s;
+    }
+
+    .input-actions-left button:hover {
+      color: #667eea;
+    }
+
+    /* 响应式 */
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        height: 100vh;
+        border-radius: 0;
+      }
+
+      .sidebar {
+        width: 100%;
+        flex-direction: row;
+        overflow-x: auto;
+        border-right: none;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      .sidebar-header {
+        display: none;
+      }
+
+      .menu-item {
+        flex-shrink: 0;
+      }
+
+      .user-info {
+        display: none;
+      }
+
+      .message-content {
+        max-width: 85%;
+      }
+    }
+
+    /* 滚动条样式 */
+    .messages-container::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .messages-container::-webkit-scrollbar-track {
+      background: #f0f0f0;
+    }
+
+    .messages-container::-webkit-scrollbar-thumb {
+      background: #c0c0c0;
+      border-radius: 3px;
+    }
+
+    .messages-container::-webkit-scrollbar-thumb:hover {
+      background: #a0a0a0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- 左侧边栏 -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <h2>电商售后客服</h2>
+        <p>智能 AI 客服助手</p>
+      </div>
+
+      <div class="menu-section">
+        <div class="menu-title">快捷功能</div>
+        <div class="menu-item active" onclick="selectQuickAction('我的订单')">
+          <span class="icon">📦</span>
+          <span class="text">我的订单</span>
+        </div>
+        <div class="menu-item" onclick="selectQuickAction('物流查询')">
+          <span class="icon">🚚</span>
+          <span class="text">物流查询</span>
+        </div>
+        <div class="menu-item" onclick="selectQuickAction('退货退款')">
+          <span class="icon">↩️</span>
+          <span class="text">退货退款</span>
+        </div>
+        <div class="menu-item" onclick="selectQuickAction('价格保护')">
+          <span class="icon">💰</span>
+          <span class="text">价格保护</span>
+        </div>
+        <div class="menu-item" onclick="selectQuickAction('售后服务')">
+          <span class="icon">🛎️</span>
+          <span class="text">售后服务</span>
+        </div>
+      </div>
+
+      <div class="user-info">
+        <div class="user-id">用户ID: <span id="currentUserId">loading...</span></div>
+        <div class="mode-switch">
+          <span>模式:</span>
+          <select id="modeSelect" onchange="changeMode()">
+            <option value="auto">自动 (Agent)</option>
+            <option value="agent">强制 Agent</option>
+            <option value="rag">强制 RAG</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- 主聊天区域 -->
+    <div class="chat-area">
+      <div class="chat-header">
+        <div class="title">
+          <div class="avatar">🤖</div>
+          <div class="info">
+            <h3>AI 智能客服</h3>
+            <div class="status">在线为您服务</div>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="action-btn" onclick="clearChat()">清空对话</button>
+          <button class="action-btn" onclick="exportChat()">导出记录</button>
+        </div>
+      </div>
+
+      <div class="messages-container" id="messagesContainer">
+        <div class="welcome-message" id="welcomeMessage">
+          <div class="welcome-icon">🤖</div>
+          <h3>欢迎使用电商售后客服</h3>
+          <p>我可以帮您处理订单查询、物流跟踪、退货申请、价格保护等问题</p>
+          <div class="quick-actions">
+            <button class="quick-action-btn" onclick="quickQuestion('我的订单ORD20240115001怎么样了？')">📦 查询订单状态</button>
+            <button class="quick-action-btn" onclick="quickQuestion('查一下订单ORD20240115001的物流信息')">🚚 查询物流</button>
+            <button class="quick-action-btn" onclick="quickQuestion('我想退货，订单号ORD20240114002，原因是质量有问题')">↩️ 申请退货</button>
+            <button class="quick-action-btn" onclick="quickQuestion('订单ORD20240114002降价了，现在500元，申请价格保护')">💰 价格保护</button>
+            <button class="quick-action-btn" onclick="quickQuestion('我的退款什么时候到账？')">💳 查询退款</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="input-area">
+        <div class="input-container">
+          <div class="input-wrapper">
+            <input
+              type="text"
+              id="messageInput"
+              placeholder="请输入您的问题..."
+              onkeypress="handleKeyPress(event)"
+              autocomplete="off"
+            >
+          </div>
+          <button class="send-btn" id="sendBtn" onclick="sendMessage()" disabled>
+            ➤
+          </button>
+        </div>
+        <div class="input-actions">
+          <div class="input-actions-left">
+            <button onclick="quickQuestion('如何申请退货？')">❓ 如何退货</button>
+            <button onclick="quickQuestion('价格保护政策是什么？')">💰 价格保护</button>
+            <button onclick="quickQuestion('退款多久到账？')">💳 退款时效</button>
+          </div>
+          <button onclick="selectQuickAction('转人工客服')">👤 转人工客服</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 状态管理
+    let sessionId = `session-${Date.now()}`;
+    let userId = localStorage.getItem('customerUserId');
+    let messages = [];
+    let isLoading = false;
+    let currentMode = 'auto';
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!userId) {
+        userId = `customer-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        localStorage.setItem('customerUserId', userId);
+      }
+      document.getElementById('currentUserId').textContent = userId;
+
+      // 输入框事件
+      const input = document.getElementById('messageInput');
+      input.addEventListener('input', () => {
+        document.getElementById('sendBtn').disabled = !input.value.trim();
+      });
+    });
+
+    // 快速问题
+    function quickQuestion(question) {
+      const input = document.getElementById('messageInput');
+      input.value = question;
+      document.getElementById('sendBtn').disabled = false;
+      sendMessage();
+    }
+
+    // 选择快捷操作
+    function selectQuickAction(action) {
+      const menuItems = document.querySelectorAll('.menu-item');
+      menuItems.forEach(item => item.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+
+      if (action === '转人工客服') {
+        quickQuestion('我需要转人工客服帮忙');
+      } else if (action === '我的订单') {
+        quickQuestion('查看我的所有订单');
+      } else if (action === '物流查询') {
+        quickQuestion('我的订单物流信息怎么查？');
+      } else if (action === '退货退款') {
+        quickQuestion('我想申请退货，流程是什么？');
+      } else if (action === '价格保护') {
+        quickQuestion('价格保护政策是怎样的？');
+      } else if (action === '售后服务') {
+        quickQuestion('售后服务包括哪些内容？');
+      }
+    }
+
+    // 改变模式
+    function changeMode() {
+      currentMode = document.getElementById('modeSelect').value;
+      addSystemMessage(`已切换到${currentMode === 'auto' ? '自动' : currentMode === 'agent' ? 'Agent' : 'RAG'}模式`);
+    }
+
+    // 添加系统消息
+    function addSystemMessage(text) {
+      const container = document.getElementById('messagesContainer');
+      const systemMsg = document.createElement('div');
+      systemMsg.style.cssText = 'text-align: center; padding: 8px; color: #999; font-size: 12px;';
+      systemMsg.textContent = text;
+      container.appendChild(systemMsg);
+      scrollToBottom();
+    }
+
+    // 键盘事件
+    function handleKeyPress(event) {
+      if (event.key === 'Enter') {
+        sendMessage();
+      }
+    }
+
+    // 发送消息
+    async function sendMessage() {
+      const input = document.getElementById('messageInput');
+      const message = input.value.trim();
+
+      if (!message || isLoading) return;
+
+      // 隐藏欢迎消息
+      document.getElementById('welcomeMessage').style.display = 'none';
+
+      // 添加用户消息
+      addMessage('user', message);
+      input.value = '';
+      document.getElementById('sendBtn').disabled = true;
+
+      // 显示加载动画
+      showTypingIndicator();
+      isLoading = true;
+
+      try {
+        const response = await fetch('http://localhost:3001/api/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: message,
+            sessionId: sessionId,
+            userId: userId,
+            useAgent: currentMode === 'agent' ? true : currentMode === 'rag' ? false : undefined
+          })
+        });
+
+        const data = await response.json();
+
+        // 移除加载动画
+        hideTypingIndicator();
+
+        if (data.success) {
+          addMessage('assistant', data.response, data.mode, data);
+        } else {
+          addMessage('assistant', '抱歉，我遇到了一些问题，请稍后再试。', 'error');
+        }
+      } catch (error) {
+        hideTypingIndicator();
+        addMessage('assistant', '网络错误，请检查服务器是否启动。\n提示：请在 server 目录运行 npm start', 'error');
+        console.error('Error:', error);
+      }
+
+      isLoading = false;
+    }
+
+    // 添加消息
+    function addMessage(role, content, mode = 'unknown', data = null) {
+      const container = document.getElementById('messagesContainer');
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${role}`;
+
+      const avatar = role === 'user' ? '👤' : '🤖';
+      const time = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+
+      let modeBadge = '';
+      if (role === 'assistant' && mode && mode !== 'unknown') {
+        modeBadge = `<span class="message-mode ${mode}">${mode.toUpperCase()}</span>`;
+      }
+
+      let sourcesHtml = '';
+      if (data && data.sources && data.sources.length > 0) {
+        sourcesHtml = `
+          <div class="message-sources">
+            <div class="message-sources-label">📚 知识来源:</div>
+            <div class="message-sources-list">
+              ${data.sources.map(s => `<span class="source-tag">${s.documentName}</span>`).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      let toolResultHtml = '';
+      if (data && data.toolResult && data.toolResult.success) {
+        const tool = data.toolResult;
+        if (tool.order) {
+          toolResultHtml = `
+            <div class="tool-result">
+              <div class="tool-result-header">🔧 订单查询结果</div>
+              <div class="tool-result-content">
+                <div class="order-info">
+                  <div class="order-info-item"><label>订单号:</label><span>${tool.order.orderId}</span></div>
+                  <div class="order-info-item"><label>状态:</label><span>${tool.order.status}</span></div>
+                  <div class="order-info-item"><label>金额:</label><span>¥${tool.order.totalAmount}</span></div>
+                  <div class="order-info-item"><label>下单时间:</label><span>${tool.order.orderTime}</span></div>
+                  ${tool.order.logistics ? `
+                    <div class="order-info-item"><label>物流:</label><span>${tool.order.logistics.company} ${tool.order.logistics.trackingNumber}</span></div>
+                  ` : ''}
+                </div>
+              </div>
+            </div>
+          `;
+        }
+      }
+
+      messageDiv.innerHTML = `
+        <div class="message-avatar">${avatar}</div>
+        <div>
+          <div class="message-content">${escapeHtml(content)}</div>
+          <div class="message-meta">
+            ${modeBadge}
+            <span>${time}</span>
+          </div>
+          ${sourcesHtml}
+          ${toolResultHtml}
+        </div>
+      `;
+
+      container.appendChild(messageDiv);
+      scrollToBottom();
+    }
+
+    // HTML转义
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML.replace(/\n/g, '<br>');
+    }
+
+    // 显示加载动画
+    function showTypingIndicator() {
+      const container = document.getElementById('messagesContainer');
+      const indicator = document.createElement('div');
+      indicator.className = 'typing-indicator';
+      indicator.id = 'typingIndicator';
+      indicator.innerHTML = `
+        <span></span>
+        <span></span>
+        <span></span>
+      `;
+      container.appendChild(indicator);
+      scrollToBottom();
+    }
+
+    // 隐藏加载动画
+    function hideTypingIndicator() {
+      const indicator = document.getElementById('typingIndicator');
+      if (indicator) {
+        indicator.remove();
+      }
+    }
+
+    // 滚动到底部
+    function scrollToBottom() {
+      const container = document.getElementById('messagesContainer');
+      container.scrollTop = container.scrollHeight;
+    }
+
+    // 清空对话
+    function clearChat() {
+      const container = document.getElementById('messagesContainer');
+      container.innerHTML = `
+        <div class="welcome-message" id="welcomeMessage">
+          <div class="welcome-icon">🤖</div>
+          <h3>欢迎使用电商售后客服</h3>
+          <p>我可以帮您处理订单查询、物流跟踪、退货申请、价格保护等问题</p>
+          <div class="quick-actions">
+            <button class="quick-action-btn" onclick="quickQuestion('我的订单ORD20240115001怎么样了？')">📦 查询订单状态</button>
+            <button class="quick-action-btn" onclick="quickQuestion('查一下订单ORD20240115001的物流信息')">🚚 查询物流</button>
+            <button class="quick-action-btn" onclick="quickQuestion('我想退货，订单号ORD20240114002，原因是质量有问题')">↩️ 申请退货</button>
+            <button class="quick-action-btn" onclick="quickQuestion('订单ORD20240114002降价了，现在500元，申请价格保护')">💰 价格保护</button>
+            <button class="quick-action-btn" onclick="quickQuestion('我的退款什么时候到账？')">💳 查询退款</button>
+          </div>
+        </div>
+      `;
+      sessionId = `session-${Date.now()}`;
+      messages = [];
+    }
+
+    // 导出聊天记录
+    function exportChat() {
+      const container = document.getElementById('messagesContainer');
+      const text = container.innerText;
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `chat-export-${new Date().toISOString().slice(0, 10)}.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>
