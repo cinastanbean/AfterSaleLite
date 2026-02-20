@@ -1,5 +1,14 @@
 # AfterSaleLite
 
+---
+**Agent开发的真正开始，是在Demo跑通之后。**
+
+**剩下的工作，是长达80%的、艰苦的、与业务细节搏斗的工程化、领域化和产品化过程。**
+
+**成功的Agent，是三分算法、七分业务理解、十二分工程实现。**
+
+---
+
 一个基于 Agent 架构的智能客服学习项目，通过电商客服场景验证意图识别、工具调用、任务规划和 RAG 检索的完整流程。
 
 **AfterSaleLite** - AI-Powered Customer Service System with Agent Architecture
