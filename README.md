@@ -17,19 +17,19 @@
 ## 📚 文档导航
 
 ### 入门指南
-- **[快速入门](QUICKSTART.md)** - 5分钟快速启动项目
-- **[项目总览](PROJECT_OVERVIEW.md)** - 了解项目整体架构和设计思路
+- **[快速入门](doc/QUICKSTART.md)** - 5分钟快速启动项目
+- **[项目总览](doc/PROJECT_OVERVIEW.md)** - 了解项目整体架构和设计思路
 
 ### 技术文档
-- **[AGENTS.md](AGENTS.md)** - Agent 架构详解、API 说明、开发指南
-- **[RAG_SETUP.md](RAG_SETUP.md)** - RAG 模式配置、免费 API 申请
-- **[VECTOR_DB.md](VECTOR_DB.md)** - 向量数据库方案分析、性能评估
+- **[AGENTS.md](doc/AGENTS.md)** - Agent 架构详解、API 说明、开发指南
+- **[RAG_SETUP.md](doc/RAG_SETUP.md)** - RAG 模式配置、免费 API 申请
+- **[VECTOR_DB.md](doc/VECTOR_DB.md)** - 向量数据库方案分析、性能评估
 
 ### 开发文档
-- **[DEVELOPMENT.md](DEVELOPMENT.md)** - 版本历史、技术决策、实现细节
+- **[DEVELOPMENT.md](doc/DEVELOPMENT.md)** - 版本历史、技术决策、实现细节
 
 ### 项目感悟
-- **[INSIGHTS.md](INSIGHTS.md)** - AI 时代的开发反思、角色转变、行业洞察
+- **[INSIGHTS.md](doc/INSIGHTS.md)** - AI 时代的开发反思、角色转变、行业洞察
 
 ---
 
@@ -125,7 +125,7 @@ AGENT_MODE=auto
 USE_RAG=true
 ```
 
-详细配置请参考 [RAG_SETUP.md](RAG_SETUP.md)。
+详细配置请参考 [RAG_SETUP.md](doc/RAG_SETUP.md)。
 
 ---
 
@@ -143,7 +143,7 @@ cd server && npm start
 cd client && npm run dev
 ```
 
-完整步骤请参考 [QUICKSTART.md](QUICKSTART.md)。
+完整步骤请参考 [QUICKSTART.md](doc/QUICKSTART.md)。
 
 ---
 
@@ -199,7 +199,7 @@ Agent 模式失败 → RAG 模式 → 传统模式 → 人工客服，确保服�
 - 向量数据库：选择 SQLite 而非 Pinecone（零成本、零运维、快速验证）
 - LLM 选择：GLM-4-Flash 而非 GPT-4（学习项目零成本即可）
 
-详细的技术洞察和行业分析请参考 [INSIGHTS.md](INSIGHTS.md)。
+详细的技术洞察和行业分析请参考 [INSIGHTS.md](doc/INSIGHTS.md)。
 
 ---
 
