@@ -3,10 +3,10 @@
 本文档详细说明电商客服系统的 Agent 功能，包括架构设计、使用方法和开发指南。
 
 **相关文档**：
-- [项目总览](PROJECT_OVERVIEW.md) - 了解 Agent 在整体架构中的位置
-- [快速入门](QUICKSTART.md) - 快速体验 Agent 功能
-- [RAG 配置](RAG_SETUP.md) - 了解 RAG 模式的配置
-- [项目感悟](INSIGHTS.md) - Agent 架构的设计思考
+- [项目总览.md](项目总览.md) - 了解 Agent 在整体架构中的位置
+- [快速入门.md](快速入门.md) - 快速体验 Agent 功能
+- [RAG配置.md](RAG配置.md) - 了解 RAG 模式的配置
+- [项目感悟.md](项目感悟.md) - Agent 架构的设计思考
 
 ## 目录
 
